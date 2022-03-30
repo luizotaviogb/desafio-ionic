@@ -1,0 +1,7 @@
+{
+  "name": "desafio-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
