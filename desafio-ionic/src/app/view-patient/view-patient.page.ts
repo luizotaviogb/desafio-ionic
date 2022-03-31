@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Patient } from '../models/patient.model';
 import { DataService, Message } from '../services/data.service';
 
 @Component({
@@ -9,15 +10,16 @@ import { DataService, Message } from '../services/data.service';
 })
 export class ViewPatientPage implements OnInit {
   public message: Message;
-
+  @Input() patient: Patient;
   constructor(
     private data: DataService,
     private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.message = this.data.getMessageById(parseInt(id, 10));
+    // const id = this.activatedRoute.snapshot.paramMap.get('id');
+    // this.message = this.data.getMessageById(parseInt(id, 10));
+    console.log(this.patient)
   }
 
   getBackButtonText() {

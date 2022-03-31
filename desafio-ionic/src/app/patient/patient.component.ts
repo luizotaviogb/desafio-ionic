@@ -23,10 +23,11 @@ export class PatientComponent implements OnInit {
   async showPatientProfile(patient: Patient) {
     const modal = await this.modalController.create({
         component: ViewPatientPage,
-        cssClass: 'person-profile-modal',
         componentProps: {
             patient: patient
-        }
+        },
+        breakpoints: [0, 0.2, 0.5, 1],
+          initialBreakpoint: 0.8,
     });
     await modal.present();
 }

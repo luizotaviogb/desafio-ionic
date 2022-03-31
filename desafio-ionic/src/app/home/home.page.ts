@@ -31,6 +31,7 @@ export class HomePage implements OnInit {
   getPatients() {
 
     this.dataService.getPatients().then(response => {
+      console.log(response)
       this.patients = response['results'].map(patient => new Patient(patient));
       this.patients.forEach(e => {
         e.dob.date = DateTime.fromISO(e.dob.date).toISODate()
