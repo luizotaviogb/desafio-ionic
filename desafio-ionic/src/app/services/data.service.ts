@@ -84,7 +84,6 @@ export class DataService {
   }
   
   public getPatients(){
-    console.log(this.http.get('https://randomuser.me/api?results=50').toPromise())
-      return this.http.get('https://randomuser.me/api').toPromise();
+      return this.http.get('https://randomuser.me/api?results=50').toPromise();
   }
 }

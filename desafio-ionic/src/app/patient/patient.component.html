@@ -1,0 +1,16 @@
+<ion-item *ngIf="patient" (click)="showPatientProfile(patient)" [detail]="false">
+  <div slot="start"></div>
+  <ion-label class="ion-text-wrap">
+    <h2>
+      {{ patient.name.first }} {{patient.name.last}}
+      <span class="date">
+        <ion-note>{{ patient.dob.date }}</ion-note>
+        <ion-icon name="chevron-forward" size="small" *ngIf="isIos()"></ion-icon>
+      </span>
+    </h2>
+    <h3>{{ patient.gender }}</h3>
+    <ion-avatar>
+      <ion-img [src]="patient.picture.medium"> </ion-img>
+    </ion-avatar>
+  </ion-label>
+</ion-item>

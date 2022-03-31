@@ -4,12 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-
-import { MessageComponent } from './message.component';
+import { PatientComponent } from './patient.component';
 
 @NgModule({
   imports: [ CommonModule, FormsModule, IonicModule, RouterModule],
-  declarations: [MessageComponent],
-  exports: [MessageComponent]
+  declarations: [PatientComponent],
+  exports: [PatientComponent]
 })
-export class MessageComponentModule {}
+export class PatientComponentModule {}
