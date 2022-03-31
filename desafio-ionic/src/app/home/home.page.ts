@@ -34,7 +34,7 @@ export class HomePage implements OnInit {
       console.log(response)
       this.patients = response['results'].map(patient => new Patient(patient));
       this.patients.forEach(e => {
-        e.dob.date = DateTime.fromISO(e.dob.date).toISODate()
+        e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
       });
       console.log(this.patients)
     });
