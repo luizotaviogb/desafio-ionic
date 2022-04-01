@@ -82,8 +82,9 @@ export class DataService {
   public getMessageById(id: number): Message {
     return this.messages[id];
   }
-  
-  public getPatients(){
-      return this.http.get('https://randomuser.me/api?results=50').toPromise();
+
+  public getPatients(queryParams: string = '') {
+    queryParams = encodeURI(queryParams)
+    return this.http.get('https://randomuser.me/api?results=50&' + queryParams).toPromise();
   }
 }

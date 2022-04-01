@@ -38,3 +38,14 @@ h1 {
 p {
   line-height: 22px;
 }
+
+.item-avatar {
+  margin: auto;
+  background-image: linear-gradient(white, white), radial-gradient(circle at top left, #ffcb04 20%, #8ac440);
+  border-radius: 50%;
+  border: double 2px transparent;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100px !important; //any size
+  max-height: 100px !important; //any size 
+}

@@ -7,15 +7,18 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" *ngIf="patient">
-  <ion-item>
-    <ion-avatar class="center"color="primary"><ion-img [src]="patient.picture.large"> </ion-img></ion-avatar>
-  </ion-item>
+  
   <ion-list>
+    <ion-list-header>
+      <ion-item style="margin:auto">
+        <ion-avatar class="item item-avatar" color="primary"><ion-img [src]="patient.picture.large"> </ion-img></ion-avatar>
+      </ion-item>
+    </ion-list-header>
     <ion-item>
       Name: {{ patient.name.first }} {{patient.name.last}}
     </ion-item>
     <ion-item>
-      Email: {{ patient.name.first }} 
+      Email: {{ patient.email}} 
     </ion-item>
     <ion-item>
       Gender: {{ patient.gender }} 
