@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Patient } from '../models/patient.model';
 import { DataService } from '../services/data.service';
-import { DateTime } from 'luxon';
 import { AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -24,6 +23,7 @@ export class HomePage implements OnInit {
   public page: number = 1;
   public take: number = 50;
   public gender: string = null
+  public nat: string = null
 
   refresh(ev) {
     setTimeout(() => {
@@ -35,15 +35,14 @@ export class HomePage implements OnInit {
     this.concatPatients()
   }
 
-  getPatients(queryParams: string = null): Observable<Patient[]> {
-    queryParams = encodeURI(queryParams)
-    return this.httpClient.get<Patient[]>('https://randomuser.me/api?results=50&' + queryParams)
+  getPatients(): Observable<Patient[]> {
+    return this.httpClient.get<Patient[]>('https://randomuser.me/api?results=50&' + "gender=" + this.gender + "&nat=" + this.nat)
       .pipe(
         tap(Patient => console.log('Users list received!'))
       );
   }
 
-  concatPatients(queryParams: string = null, ionRefresher: any = null, ionInfiniteScroll: any = null){
+  concatPatients(ionRefresher: any = null, ionInfiniteScroll: any = null){
 
     if (ionRefresher !== null || 
       (ionRefresher == null && ionInfiniteScroll == null) ||
@@ -51,8 +50,7 @@ export class HomePage implements OnInit {
    ) {
        this.resetList();
    }
-   queryParams = "gender=" + queryParams
-    this.getPatients(queryParams).subscribe(response => {
+    this.getPatients().subscribe(response => {
       this.patients = this.patients.concat ( response['results'].map(patient => new Patient(patient)))
       this.page++;
 
@@ -118,7 +116,8 @@ export class HomePage implements OnInit {
         }, {
           text: 'Filter',
           handler: () => {
-            this.concatPatients(this.gender)
+            this.loading=true
+            this.concatPatients()
           }
         }
       ]

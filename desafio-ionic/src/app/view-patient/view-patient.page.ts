@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Patient } from '../models/patient.model';
-import { DataService, Message } from '../services/data.service';
+import { DataService} from '../services/data.service';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-view-patient',
@@ -9,16 +10,13 @@ import { DataService, Message } from '../services/data.service';
   styleUrls: ['./view-patient.page.scss'],
 })
 export class ViewPatientPage implements OnInit {
-  public message: Message;
   @Input() patient: Patient;
+  public formattedDate: any = null
   constructor(
-    private data: DataService,
-    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    // const id = this.activatedRoute.snapshot.paramMap.get('id');
-    // this.message = this.data.getMessageById(parseInt(id, 10));
+    this.formattedDate = DateTime.fromISO(this.patient.dob.date).toLocaleString(DateTime.DATE_SHORT)
     console.log(this.patient)
   }
 

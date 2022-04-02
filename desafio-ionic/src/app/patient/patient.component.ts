@@ -10,13 +10,12 @@ import { DateTime } from 'luxon';
 })
 export class PatientComponent implements OnInit {
   @Input() patient: Patient;
-
+  public name : any = null
+  public formattedDate : any = null
   constructor(public modalController: ModalController) { }
 
   ngOnInit() {
-    this.patient.dob.date = DateTime.fromISO(this.patient.dob.date).toLocaleString(DateTime.DATE_SHORT)
-        this.patient.name = this.patient.name.first + " " + this.patient.name.last
-
+    this.formattedDate = DateTime.fromISO(this.patient.dob.date).toLocaleString(DateTime.DATE_SHORT)
   }
 
   isIos() {
