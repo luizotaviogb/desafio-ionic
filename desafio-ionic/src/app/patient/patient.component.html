@@ -9,7 +9,7 @@
   </ion-item>
   <ion-label class="ion-text-wrap">
     <h2>
-      {{patient.name.first}} {{patient.name.last}}
+      {{patient.fullName}}
       <span class="date">
         <ion-note>{{this.formattedDate}}</ion-note>
         <ion-icon name="chevron-forward" size="small" *ngIf="isIos()"></ion-icon>

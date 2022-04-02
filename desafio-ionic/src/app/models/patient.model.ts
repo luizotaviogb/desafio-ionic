@@ -10,22 +10,10 @@ export class Patient extends Serializable {
     public id: any = null
     public picture: any = null
     public nat: string = null
-
+    public fullName: string = null
+    
     constructor(data: any = {}) {
         super();
         this.serialize(data);
     }
-    get http_data() {
-        return {
-            gender: this.gender,
-            name: this.location,
-            email: this.email,
-            dob: this.dob,
-            phone: this.phone,
-            id: this.id,
-            picture: this.picture,
-            nat: this.nat
-        }
-    }
-
 }

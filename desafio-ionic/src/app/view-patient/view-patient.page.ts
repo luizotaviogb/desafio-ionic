@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Patient } from '../models/patient.model';
-import { DataService} from '../services/data.service';
 import { DateTime } from 'luxon';
 
 @Component({
@@ -12,6 +10,9 @@ import { DateTime } from 'luxon';
 export class ViewPatientPage implements OnInit {
   @Input() patient: Patient;
   public formattedDate: any = null
+  public skeletons: Array<Number> = Array(15).fill(15).map((x, i) => i);
+  public loading: boolean = true
+
   constructor(
   ) { }
 
@@ -20,9 +21,13 @@ export class ViewPatientPage implements OnInit {
     console.log(this.patient)
   }
 
+  ionViewDidEnter() {
+    this.loading = false
+  }
+
   getBackButtonText() {
     const win = window as any;
     const mode = win && win.Ionic && win.Ionic.mode;
-    return mode === 'ios' ? 'Inbox' : '';
+    return mode === 'ios' ? 'Patients' : '';
   }
 }

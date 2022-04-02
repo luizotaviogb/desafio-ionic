@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Patient } from '../models/patient.model';
 import { DataService } from '../services/data.service';
 import { AlertController } from '@ionic/angular';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-home',
@@ -12,7 +10,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomePage implements OnInit {
   constructor(public dataService: DataService, public alertController: AlertController, private httpClient: HttpClient) {
-
   }
 
   public patients: Array<Patient> = []
@@ -32,37 +29,30 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.concatPatients()
+    this.getPatients()
   }
 
-  getPatients(): Observable<Patient[]> {
-    return this.httpClient.get<Patient[]>('https://randomuser.me/api?results=50&' + "gender=" + this.gender + "&nat=" + this.nat)
-      .pipe(
-        tap(Patient => console.log('Users list received!'))
-      );
-  }
+  getPatients(ionRefresher: any = null, ionInfiniteScroll: any = null) {
 
-  concatPatients(ionRefresher: any = null, ionInfiniteScroll: any = null){
-
-    if (ionRefresher !== null || 
+    if (ionRefresher !== null ||
       (ionRefresher == null && ionInfiniteScroll == null) ||
       this.searchValue
-   ) {
-       this.resetList();
-   }
-    this.getPatients().subscribe(response => {
-      this.patients = this.patients.concat ( response['results'].map(patient => new Patient(patient)))
+    ) {
+      this.resetList();
+    }
+    this.dataService.getPatients(this.gender, this.nat).subscribe(response => {
+      this.patients = this.patients.concat(response['results'].map(patient => new Patient(patient)))
       this.page++;
 
-            if (ionInfiniteScroll) {
-                ionInfiniteScroll.target.complete();
-            }
-            
-            if (ionRefresher) {
-                ionRefresher.target.complete();
-            }
-            
-            this.loading = false;
+      if (ionInfiniteScroll) {
+        ionInfiniteScroll.target.complete();
+      }
+
+      if (ionRefresher) {
+        ionRefresher.target.complete();
+      }
+
+      this.loading = false;
 
       this.loading = false
     });
@@ -70,11 +60,12 @@ export class HomePage implements OnInit {
   resetList() {
     this.patients = [];
     this.page = 1;
-}
+  }
 
   async toggleSearch() {
     const alert = await this.alertController.create({
-      header: 'Gender',
+      header: 'Filters',
+      subHeader: 'Gender',
       inputs: [
         {
           name: 'male',
@@ -116,8 +107,8 @@ export class HomePage implements OnInit {
         }, {
           text: 'Filter',
           handler: () => {
-            this.loading=true
-            this.concatPatients()
+            this.loading = true
+            this.getPatients()
           }
         }
       ]

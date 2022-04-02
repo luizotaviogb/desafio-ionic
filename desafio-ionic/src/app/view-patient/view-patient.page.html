@@ -7,36 +7,44 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" *ngIf="patient">
-  
+
   <ion-list>
+    <ng-container *ngIf="loading">
+      <ion-item *ngFor="let skeleton of skeletons">
+        <ion-skeleton-text animated style="width: 100%; height: 50%;"></ion-skeleton-text>
+      </ion-item>
+    </ng-container>
     <ion-list-header>
       <ion-item style="margin:auto">
-        <ion-avatar class="item item-avatar" color="primary"><ion-img [src]="patient.picture.large"> </ion-img></ion-avatar>
+        <ion-avatar class="item item-avatar" color="primary">
+          <ion-img [src]="patient.picture.large"> </ion-img>
+        </ion-avatar>
       </ion-item>
     </ion-list-header>
     <ion-item>
-      Name: {{ patient.name.first }} {{patient.name.last}}
+      Name: {{ patient.fullName }}
     </ion-item>
     <ion-item>
-      Email: {{ patient.email}} 
+      Email: {{ patient.email}}
     </ion-item>
     <ion-item>
-      Gender: {{ patient.gender }} 
+      Gender: {{ patient.gender }}
     </ion-item>
     <ion-item>
-      Birthday: {{ this.formattedDate }} 
+      Birthday: {{ this.formattedDate }}
     </ion-item>
     <ion-item>
-      Phone: {{ patient.phone }} 
+      Phone: {{ patient.phone }}
     </ion-item>
     <ion-item>
-      Naturality: {{ patient.nat }} 
+      Naturality: {{ patient.nat }}
     </ion-item>
     <ion-item>
-      Address: {{ patient.location.street.number }} {{patient.location.street.name}} {{patient.location.city}} {{patient.location.state}} 
+      Address: {{ patient.location.street.number }} {{patient.location.street.name}} {{patient.location.city}}
+      {{patient.location.state}}
     </ion-item>
     <ion-item>
-      ID: {{ patient.id.value }} 
+      ID: {{ patient.id.value }}
     </ion-item>
   </ion-list>
 </ion-content>
