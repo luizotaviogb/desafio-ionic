@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { PatientComponentModule } from '../patient/patient.module';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { PatientComponentModule } from '../patient/patient.module';
     FormsModule,
     IonicModule,
     PatientComponentModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    Ng2SearchPipeModule
   ],
   declarations: [HomePage]
 })
