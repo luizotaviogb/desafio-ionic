@@ -48,14 +48,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HomePageModule": () => (/* binding */ HomePageModule)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tslib */ 4929);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ 6362);
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ 3819);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ 587);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 6362);
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/angular */ 3819);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/forms */ 587);
 /* harmony import */ var _home_page__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home.page */ 2267);
 /* harmony import */ var _home_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home-routing.module */ 2003);
 /* harmony import */ var _patient_patient_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../patient/patient.module */ 2158);
+/* harmony import */ var ng2_search_filter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ng2-search-filter */ 9991);
+
 
 
 
@@ -66,14 +68,15 @@ __webpack_require__.r(__webpack_exports__);
 
 let HomePageModule = class HomePageModule {
 };
-HomePageModule = (0,tslib__WEBPACK_IMPORTED_MODULE_3__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.NgModule)({
+HomePageModule = (0,tslib__WEBPACK_IMPORTED_MODULE_4__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_5__.NgModule)({
         imports: [
-            _angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule,
-            _angular_forms__WEBPACK_IMPORTED_MODULE_6__.FormsModule,
-            _ionic_angular__WEBPACK_IMPORTED_MODULE_7__.IonicModule,
+            _angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule,
+            _angular_forms__WEBPACK_IMPORTED_MODULE_7__.FormsModule,
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_8__.IonicModule,
             _patient_patient_module__WEBPACK_IMPORTED_MODULE_2__.PatientComponentModule,
-            _home_routing_module__WEBPACK_IMPORTED_MODULE_1__.HomePageRoutingModule
+            _home_routing_module__WEBPACK_IMPORTED_MODULE_1__.HomePageRoutingModule,
+            ng2_search_filter__WEBPACK_IMPORTED_MODULE_3__.Ng2SearchPipeModule
         ],
         declarations: [_home_page__WEBPACK_IMPORTED_MODULE_0__.HomePage]
     })
@@ -93,14 +96,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HomePage": () => (/* binding */ HomePage)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tslib */ 4929);
 /* harmony import */ var _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home.page.html?ngResource */ 3853);
 /* harmony import */ var _home_page_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home.page.scss?ngResource */ 1020);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var _models_patient_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../models/patient.model */ 3822);
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/data.service */ 2468);
 /* harmony import */ var luxon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! luxon */ 9527);
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ 3819);
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ 3819);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ 8759);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common/http */ 8784);
+
+
 
 
 
@@ -110,12 +117,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let HomePage = class HomePage {
-    constructor(dataService, alertController) {
+    constructor(dataService, alertController, httpClient) {
         this.dataService = dataService;
         this.alertController = alertController;
+        this.httpClient = httpClient;
         this.patients = [];
         this.search = false;
-        this.searchValue = '';
         this.loading = true;
         this.skeletons = Array(15).fill(15).map((x, i) => i);
         this.page = 1;
@@ -131,21 +138,22 @@ let HomePage = class HomePage {
         return this.dataService.getMessages();
     }
     ngOnInit() {
-        this.getPatients(this.searchValue);
-    }
-    getPatients(queryParam) {
-        this.dataService.getPatients(queryParam).then(response => {
-            console.log(response);
+        this.getPatients().subscribe(response => {
             this.patients = response['results'].map(patient => new _models_patient_model__WEBPACK_IMPORTED_MODULE_2__.Patient(patient));
             this.patients.forEach(e => {
                 e.dob.date = luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromISO(e.dob.date).toLocaleString(luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.DATE_SHORT);
                 e.name = e.name.first + " " + e.name.last;
             });
-            console.log(this.patients);
+            this.loading = false;
         });
     }
+    getPatients(queryParams = null) {
+        queryParams = encodeURI(queryParams);
+        return this.httpClient.get('https://randomuser.me/api?results=50&' + queryParams)
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.tap)(Patient => console.log('Users list received!')));
+    }
     toggleSearch() {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__awaiter)(this, void 0, void 0, function* () {
             const alert = yield this.alertController.create({
                 header: 'Gender',
                 inputs: [
@@ -155,9 +163,8 @@ let HomePage = class HomePage {
                         label: 'Male',
                         value: 'male',
                         handler: () => {
-                            console.log('Radio 1 selected');
+                            this.gender = "male";
                         },
-                        checked: true
                     },
                     {
                         name: 'female',
@@ -165,7 +172,16 @@ let HomePage = class HomePage {
                         label: 'Female',
                         value: 'female',
                         handler: () => {
-                            console.log('Radio 2 selected');
+                            this.gender = "female";
+                        }
+                    },
+                    {
+                        name: 'any',
+                        type: 'radio',
+                        label: 'Any',
+                        value: 'Any',
+                        handler: () => {
+                            this.gender = "";
                         }
                     }
                 ],
@@ -175,12 +191,20 @@ let HomePage = class HomePage {
                         role: 'cancel',
                         cssClass: 'secondary',
                         handler: () => {
-                            console.log('Confirm Cancel');
+                            this.gender = "";
+                            console.log(this.gender);
                         }
                     }, {
-                        text: 'Ok',
+                        text: 'Filter',
                         handler: () => {
-                            console.log('Confirm Ok');
+                            var genderQuery = "gender=" + this.gender;
+                            this.getPatients(genderQuery).subscribe(response => {
+                                this.patients = response['results'].map(patient => new _models_patient_model__WEBPACK_IMPORTED_MODULE_2__.Patient(patient));
+                                this.patients.forEach(e => {
+                                    e.dob.date = luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromISO(e.dob.date).toLocaleString(luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.DATE_SHORT);
+                                    e.name = e.name.first + " " + e.name.last;
+                                });
+                            });
                         }
                     }
                 ]
@@ -195,10 +219,11 @@ let HomePage = class HomePage {
 };
 HomePage.ctorParameters = () => [
     { type: _services_data_service__WEBPACK_IMPORTED_MODULE_3__.DataService },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_6__.AlertController }
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__.AlertController },
+    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_8__.HttpClient }
 ];
-HomePage = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_7__.Component)({
+HomePage = (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_9__.Component)({
         selector: 'app-home',
         template: _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__,
         styles: [_home_page_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__]
@@ -8930,6 +8955,112 @@ exports.Zone = Zone;
 
 /***/ }),
 
+/***/ 9991:
+/*!**************************************************************************!*\
+  !*** ./node_modules/ng2-search-filter/__ivy_ngcc__/ng2-search-filter.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Ng2SearchPipeModule": () => (/* binding */ Ng2SearchPipeModule),
+/* harmony export */   "Ng2SearchPipe": () => (/* binding */ Ng2SearchPipe)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 3184);
+
+
+
+class Ng2SearchPipe {
+    /**
+     * @param {?} items object from array
+     * @param {?} term term's search
+     * @return {?}
+     */
+    transform(items, term) {
+        if (!term || !items)
+            return items;
+        return Ng2SearchPipe.filter(items, term);
+    }
+    /**
+     *
+     * @param {?} items List of items to filter
+     * @param {?} term  a string term to compare with every property of the list
+     *
+     * @return {?}
+     */
+    static filter(items, term) {
+        const /** @type {?} */ toCompare = term.toLowerCase();
+        /**
+         * @param {?} item
+         * @param {?} term
+         * @return {?}
+         */
+        function checkInside(item, term) {
+            for (let /** @type {?} */ property in item) {
+                if (item[property] === null || item[property] == undefined) {
+                    continue;
+                }
+                if (typeof item[property] === 'object') {
+                    if (checkInside(item[property], term)) {
+                        return true;
+                    }
+                }
+                if (item[property].toString().toLowerCase().includes(toCompare)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return items.filter(function (item) {
+            return checkInside(item, term);
+        });
+    }
+}
+Ng2SearchPipe.ɵfac = function Ng2SearchPipe_Factory(t) { return new (t || Ng2SearchPipe)(); };
+Ng2SearchPipe.ɵpipe = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "filter", type: Ng2SearchPipe, pure: false });
+Ng2SearchPipe.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: Ng2SearchPipe, factory: Ng2SearchPipe.ɵfac });
+/**
+ * @nocollapse
+ */
+Ng2SearchPipe.ctorParameters = () => [];
+(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Ng2SearchPipe, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__.Pipe,
+        args: [{
+                name: 'filter',
+                pure: false
+            }]
+    }, {
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__.Injectable
+    }], null, null); })();
+
+class Ng2SearchPipeModule {
+}
+Ng2SearchPipeModule.ɵfac = function Ng2SearchPipeModule_Factory(t) { return new (t || Ng2SearchPipeModule)(); };
+Ng2SearchPipeModule.ɵmod = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: Ng2SearchPipeModule });
+Ng2SearchPipeModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({});
+/**
+ * @nocollapse
+ */
+Ng2SearchPipeModule.ctorParameters = () => [];
+(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Ng2SearchPipeModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__.NgModule,
+        args: [{
+                declarations: [Ng2SearchPipe],
+                exports: [Ng2SearchPipe]
+            }]
+    }], null, null); })();
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsetNgModuleScope"](Ng2SearchPipeModule, { declarations: [Ng2SearchPipe], exports: [Ng2SearchPipe] }); })();
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
+
+
+
+
+/***/ }),
+
 /***/ 1020:
 /*!************************************************!*\
   !*** ./src/app/home/home.page.scss?ngResource ***!
@@ -8956,7 +9087,7 @@ module.exports = "ion-item {\n  --padding-start: 0;\n  --inner-padding-end: 0;\n
   \************************************************/
 /***/ ((module) => {
 
-module.exports = "<!DOCTYPE html>\n<html>\n<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      Patients\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <ion-refresher slot=\"fixed\" (ionRefresh)=\"refresh($event)\">\n    <ion-refresher-content></ion-refresher-content>\n  </ion-refresher>\n\n  <ion-header collapse=\"condense\">\n    <ion-toolbar>\n      <ion-title size=\"large\">\n        Patients\n      </ion-title>\n    </ion-toolbar>\n  </ion-header>\n  <ion-row>\n    <ion-col size=\"10\">\n      <ion-searchbar (ionInput)=\"applySearch($event)\">\n      </ion-searchbar>\n    </ion-col>\n    <ion-col size=\"2\">\n      <ion-button fill=\"clear\" size=\"large\" (click)=\"toggleSearch()\">\n        <ion-icon name=\"filter\"></ion-icon>\n      </ion-button>\n    </ion-col>\n  </ion-row>\n\n  <ion-list>\n    <app-patient *ngFor=\"let patient of patients\" [patient]=\"patient\"></app-patient>\n  </ion-list>\n</ion-content>\n\n</html>";
+module.exports = "<!DOCTYPE html>\n<html>\n<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      Patients\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <ion-refresher slot=\"fixed\" (ionRefresh)=\"refresh($event)\">\n    <ion-refresher-content></ion-refresher-content>\n  </ion-refresher>\n\n  <ion-header collapse=\"condense\">\n    <ion-toolbar>\n      <ion-title size=\"large\">\n        Patients\n      </ion-title>\n    </ion-toolbar>\n  </ion-header>\n  <ion-row>\n    <ion-col size=\"10\">\n      <ion-searchbar [(ngModel)]=\"searchValue\"> </ion-searchbar>\n    </ion-col>\n    <ion-col size=\"2\">\n      <ion-button fill=\"clear\" size=\"large\" (click)=\"toggleSearch()\">\n        <ion-icon name=\"filter\"></ion-icon>\n      </ion-button>\n    </ion-col>\n  </ion-row>\n\n  <ion-list>\n    <ng-container *ngIf=\"loading\">\n      <ion-item *ngFor=\"let skeleton of skeletons\">\n          <ion-skeleton-text animated></ion-skeleton-text>\n      </ion-item>\n  </ng-container>\n    <app-patient *ngFor=\"let patient of patients | filter:searchValue\" [patient]=\"patient\"></app-patient>\n  </ion-list>\n</ion-content>\n\n</html>";
 
 /***/ }),
 

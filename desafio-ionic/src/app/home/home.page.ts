@@ -12,13 +12,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  constructor(public dataService: DataService, public alertController: AlertController,private httpClient: HttpClient) {this.getPatients().subscribe(response => {
-    this.patients = response['results'].map(patient => new Patient(patient))
-      this.patients.forEach(e => {
-        e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
-        e.name = e.name.first + " " + e.name.last
-      });
-  }); }
+  constructor(public dataService: DataService, public alertController: AlertController, private httpClient: HttpClient) {
+
+  }
 
   public patients: Array<Patient> = []
   public search: boolean = false
@@ -40,7 +36,14 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPatients(this.searchValue)
+    this.getPatients().subscribe(response => {
+      this.patients = response['results'].map(patient => new Patient(patient))
+      this.patients.forEach(e => {
+        e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
+        e.name = e.name.first + " " + e.name.last
+      });
+      this.loading = false
+    });
   }
 
   getPatients(queryParams = null): Observable<Patient[]> {
@@ -72,6 +75,15 @@ export class HomePage implements OnInit {
           handler: () => {
             this.gender = "female"
           }
+        },
+        {
+          name: 'any',
+          type: 'radio',
+          label: 'Any',
+          value: 'Any',
+          handler: () => {
+            this.gender = ""
+          }
         }
       ],
       buttons: [
@@ -87,7 +99,13 @@ export class HomePage implements OnInit {
           text: 'Filter',
           handler: () => {
             var genderQuery = "gender=" + this.gender
-            this.getPatients(genderQuery)
+            this.getPatients(genderQuery).subscribe(response => {
+              this.patients = response['results'].map(patient => new Patient(patient))
+              this.patients.forEach(e => {
+                e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
+                e.name = e.name.first + " " + e.name.last
+              });
+            });
           }
         }
       ]
