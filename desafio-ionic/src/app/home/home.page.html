@@ -39,6 +39,10 @@
   </ng-container>
     <app-patient *ngFor="let patient of patients | filter:searchValue" [patient]="patient"></app-patient>
   </ion-list>
+  <ion-infinite-scroll threshold="30px" (ionInfinite)="concatPatients(this.gender, null , $event )">
+    <ion-infinite-scroll-content loadingSpinner="bubbles">
+    </ion-infinite-scroll-content>
+</ion-infinite-scroll>
 </ion-content>
 
 </html>

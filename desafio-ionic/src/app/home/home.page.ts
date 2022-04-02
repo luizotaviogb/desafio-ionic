@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Patient } from '../models/patient.model';
-import { DataService, Message } from '../services/data.service';
+import { DataService } from '../services/data.service';
 import { DateTime } from 'luxon';
 import { AlertController } from '@ionic/angular';
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-home',
@@ -31,28 +31,48 @@ export class HomePage implements OnInit {
     }, 3000);
   }
 
-  getMessages(): Message[] {
-    return this.dataService.getMessages();
-  }
-
   ngOnInit(): void {
-    this.getPatients().subscribe(response => {
-      this.patients = response['results'].map(patient => new Patient(patient))
-      this.patients.forEach(e => {
-        e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
-        e.name = e.name.first + " " + e.name.last
-      });
-      this.loading = false
-    });
+    this.concatPatients()
   }
 
-  getPatients(queryParams = null): Observable<Patient[]> {
+  getPatients(queryParams: string = null): Observable<Patient[]> {
     queryParams = encodeURI(queryParams)
     return this.httpClient.get<Patient[]>('https://randomuser.me/api?results=50&' + queryParams)
       .pipe(
         tap(Patient => console.log('Users list received!'))
       );
   }
+
+  concatPatients(queryParams: string = null, ionRefresher: any = null, ionInfiniteScroll: any = null){
+
+    if (ionRefresher !== null || 
+      (ionRefresher == null && ionInfiniteScroll == null) ||
+      this.searchValue
+   ) {
+       this.resetList();
+   }
+   queryParams = "gender=" + queryParams
+    this.getPatients(queryParams).subscribe(response => {
+      this.patients = this.patients.concat ( response['results'].map(patient => new Patient(patient)))
+      this.page++;
+
+            if (ionInfiniteScroll) {
+                ionInfiniteScroll.target.complete();
+            }
+            
+            if (ionRefresher) {
+                ionRefresher.target.complete();
+            }
+            
+            this.loading = false;
+
+      this.loading = false
+    });
+  }
+  resetList() {
+    this.patients = [];
+    this.page = 1;
+}
 
   async toggleSearch() {
     const alert = await this.alertController.create({
@@ -98,14 +118,7 @@ export class HomePage implements OnInit {
         }, {
           text: 'Filter',
           handler: () => {
-            var genderQuery = "gender=" + this.gender
-            this.getPatients(genderQuery).subscribe(response => {
-              this.patients = response['results'].map(patient => new Patient(patient))
-              this.patients.forEach(e => {
-                e.dob.date = DateTime.fromISO(e.dob.date).toLocaleString(DateTime.DATE_SHORT)
-                e.name = e.name.first + " " + e.name.last
-              });
-            });
+            this.concatPatients(this.gender)
           }
         }
       ]

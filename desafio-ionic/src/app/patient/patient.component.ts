@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Patient } from '../models/patient.model';
 import { ViewPatientPage } from '../view-patient/view-patient.page';
-
+import { DateTime } from 'luxon';
 @Component({
   selector: 'app-patient',
   templateUrl: './patient.component.html',
@@ -13,7 +13,11 @@ export class PatientComponent implements OnInit {
 
   constructor(public modalController: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.patient.dob.date = DateTime.fromISO(this.patient.dob.date).toLocaleString(DateTime.DATE_SHORT)
+        this.patient.name = this.patient.name.first + " " + this.patient.name.last
+
+  }
 
   isIos() {
     const win = window as any;
