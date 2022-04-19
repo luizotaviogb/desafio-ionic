@@ -20,11 +20,11 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     {
         path: 'home',
-        loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("common"), __webpack_require__.e("src_app_home_home_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./home/home.module */ 3467)).then(m => m.HomePageModule)
+        loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-src_app_view-patient_view-patient_page_ts"), __webpack_require__.e("src_app_home_home_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./home/home.module */ 3467)).then(m => m.HomePageModule)
     },
     {
         path: 'patient/:id',
-        loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("common"), __webpack_require__.e("src_app_view-patient_view-patient_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./view-patient/view-patient.module */ 6990)).then(m => m.ViewPatientPageModule)
+        loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-src_app_view-patient_view-patient_page_ts"), __webpack_require__.e("src_app_view-patient_view-patient_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./view-patient/view-patient.module */ 6990)).then(m => m.ViewPatientPageModule)
     },
     {
         path: '',

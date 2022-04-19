@@ -15,13 +15,13 @@ export class HomePage implements OnInit {
   public patients: Array<Patient> = []
   public search: boolean = false
   public searchValue: string
-  public loading: boolean = true;
-  public skeletons: Array<Number> = Array(15).fill(15).map((x, i) => i);
-  public page: number = 1;
-  public take: number = 50;
+  public loading: boolean = true
+  public skeletons: Array<Number> = Array(15).fill(15).map((x, i) => i)
+  public page: number = 1
+  public take: number = 50
   public gender: string = null
   public nat: string = null
-
+  public loadingPage: boolean = true
   refresh(ev) {
     setTimeout(() => {
       ev.detail.complete()
@@ -30,6 +30,12 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.getPatients()
+  }
+
+  ionViewDidEnter(){
+    setTimeout(() => {
+      this.loadingPage = false
+    }, 2000);
   }
 
   getPatients(ionRefresher: any = null, ionInfiniteScroll: any = null) {
